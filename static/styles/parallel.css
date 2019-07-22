@@ -1,0 +1,50 @@
+.background path {
+  font-size: 20px;
+    fill: none;
+    stroke: none;
+    stroke-width: 20px;
+    pointer-events: stroke;
+  }
+  
+  .foreground path {
+    font-size: 20px;
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+  }
+  
+  .axis .title {
+    font-size: 15px;
+    stroke: black;    
+    transform: rotate(-20deg);
+  }
+
+  /*.axis line,
+  .axis path {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }*/
+  
+  .axis.string {
+    font-size: 6px;
+  }
+  
+  .label {
+    -webkit-transition: fill 125ms linear;
+  }
+  
+  .active .label:not(.inactive) {
+    font-weight: bold;
+    font-size: 11px;
+  }
+  
+  .label.inactive {
+    fill: #ccc;
+  }
+  
+  .foreground path.inactive {
+    stroke: #ccc;
+    stroke-opacity: .5;
+    stroke-width: 1px;
+  }

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Visualization Final Project</title>
+    
+    <script src="{{ url_for('static', filename='js/d3.v4.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/jquery-2.2.4.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/queue.v1.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/d3-tip.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/topojson.v1.min.js')}}"></script>
+            
+    <link rel='stylesheet' type="text/css" href="{{ url_for('static', filename='styles/button.css')}}" />
+    <link rel='stylesheet' type="text/css" href="{{ url_for('static', filename='styles/main.css')}}" />
+    <link rel='stylesheet' type="text/css" href="{{ url_for('static', filename='styles/d3-tip.css')}}" />
+    <link rel='stylesheet' type="text/css" href="{{ url_for('static', filename='styles/parallel.css')}}" />
+
+    <script src="{{ url_for('static', filename='js/parallelCoords.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/worldMap.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/barChart.js')}}"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+years = [2008,2009,2010,2011,2012,2013,2014,2015,2016];
+var list = document.getElementById("years");
+var text = document.createElement("p");
+var node = document.createTextNode("Select Year");
+text.style.fontSize = "20px";
+text.style.fontWeight = "bold";
+text.appendChild(node);
+list.appendChild(text);
+var selectList = document.createElement("select");
+selectList.id = "yearList";
+selectList.style.borderRadius="5px";
+selectList.addEventListener("change",onListOptionChange);
+list.appendChild(selectList);
+
+
+attributeJson={
+  "ef_regulation": "Regulation",
+  "ef_trade": "Freedom to trade internationally",
+  "ef_money": "Sound Money",
+  "ef_legal": "Legal System & Property Rights",
+  "ef_government": "Size of Government",
+  "pf_identity": "Identity & Relationships",
+  "pf_expression": "Expression & Information",
+  "pf_association": "Assocoation assembly, & Civil Society",
+  "pf_religion": "Religion",
+  "pf_movement": "Movement",
+  "pf_ss": "Security and Safety",
+  "pf_rol": "Rule of Law",
+  "countries":"Countries",
+  "pf_ss_homicide": "Homicide",
+  "pf_ss_disappearances_disap": "Disappearances",
+  "pf_ss_disappearances_violent": "Violent conflicts",
+  "pf_ss_disappearances_organized": "Organized conflicts",
+  "pf_ss_disappearances_fatalities": "Terrorism fatalities",
+  "pf_ss_disappearances_injuries": "Terrorism injuries"
+
+};
+
+for(var i=-1;i<9;i++){
+  option = document.createElement("option");
+  option.value = i;
+  if(i==-1)
+  {
+    option.text = "<select>";
+  }else{
+    option.text = years[i];
+  }
+  selectList.appendChild(option);
+}
+
+});
+
+    function onListOptionChange()
+    {
+    var opt = document.getElementById("yearList");
+    selected_year = opt.options[opt.selectedIndex].value;
+    $.post("/getYearWiseData",{"data": years[selected_year]},function(data){
+
+    createWorldMap(years[selected_year]);
+    });
+    }
+
+      
+    function createBarChart(features,selected_year){
+      $.post("/getStats",{"id":features.id,"country":features.properties.name,"year":selected_year}, function(in_data){        
+         drawCountryStatsBarChart(in_data, features.properties.name);
+        });      
+    }
+
+    function createRegionCrimeStatsChart(features,selected_year){
+      $.post("/getCrimeStatsData",{"id":features.id,"country":features.properties.name,"year":selected_year},function(data){
+        regionCrimeStatsChart(data);
+      }); 
+    }
+    
+    </script>
+   
+    </head>
+<body style='background-color: #EC8B5E'>
+  
+  <div id='years' >
+      <center><strong><span style='font-size: 30px'>Human Freedom Index Ananlysis</span></strong></center>      
+  </div>
+
+<section class='container'>
+
+  <div id='worldMap' class='column1'></div>
+  <div id='countryStatsBarChart' class='column2'></div>
+  <div id='regionCrimeStats' class='column3'> </div>  
+</section>
+
+  </body>
+</html>
